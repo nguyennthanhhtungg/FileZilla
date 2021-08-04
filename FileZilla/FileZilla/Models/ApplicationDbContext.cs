@@ -32,7 +32,7 @@ namespace FileZilla.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             }
         }
@@ -209,6 +209,10 @@ namespace FileZilla.Models
             {
                 entity.ToTable("Product");
 
+                entity.HasIndex(e => e.CategoryId, "IX_Product_CategoryId");
+
+                entity.HasIndex(e => e.SupplierId, "IX_Product_SupplierId");
+
                 entity.Property(e => e.AttachedGift).HasMaxLength(200);
 
                 entity.Property(e => e.DetailDescription).IsRequired();
@@ -249,6 +253,18 @@ namespace FileZilla.Models
                 entity.Property(e => e.ShortDescription)
                     .IsRequired()
                     .HasMaxLength(500);
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Product_Category");
+
+                entity.HasOne(d => d.Supplier)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.SupplierId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Product_Supplier");
             });
 
             modelBuilder.Entity<Supplier>(entity =>
