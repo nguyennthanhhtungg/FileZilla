@@ -34,6 +34,8 @@ namespace FileZilla.Models
         public byte[] ImageData { get; set; }
         public string ImageType { get; set; }
 
+        public virtual Category Category { get; set; }
+        public virtual Supplier Supplier { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }

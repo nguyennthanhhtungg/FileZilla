@@ -21,13 +21,25 @@ namespace FileZilla
             IServiceScope scope = serviceProvider.CreateScope();
             if (args.Length == 0)
             {
-                string fileData = await scope.ServiceProvider.GetRequiredService<IOrderService>().ExportOrderSheetToCsvFileData();
-                await scope.ServiceProvider.GetRequiredService<IFileZillaService>().UploadFile(fileData, "OrderList.csv");
+                Console.WriteLine("args is empty!");
             }
             else
             {
-                string fileData = await scope.ServiceProvider.GetRequiredService<IEmployeeService>().ExportSalarySheetToCsvFileDataByMonthYear(Int32.Parse(args[0]), Int32.Parse(args[1]));
-                await scope.ServiceProvider.GetRequiredService<IFileZillaService>().UploadFile(fileData, "SalarySheet.csv");
+                if(args[0] == "OrderList.csv")
+                {
+                    string fileData = await scope.ServiceProvider.GetRequiredService<IOrderService>().ExportOrderSheetToCsvFileData();
+                    await scope.ServiceProvider.GetRequiredService<IFileZillaService>().UploadFile(fileData, "OrderList.csv");
+                }
+                else if (args[0] == "SalaryList.csv")
+                {
+                    string fileData = await scope.ServiceProvider.GetRequiredService<IEmployeeService>().ExportSalarySheetToCsvFileDataByMonthYear(Int32.Parse(args[1]), Int32.Parse(args[2]));
+                    await scope.ServiceProvider.GetRequiredService<IFileZillaService>().UploadFile(fileData, "SalaryList.csv");
+                }
+                else if (args[0] == "ExpiredProductList.csv")
+                {
+                    string fileData = await scope.ServiceProvider.GetRequiredService<IProductService>().ExportExpiredProductListToCsvFileData();
+                    await scope.ServiceProvider.GetRequiredService<IFileZillaService>().UploadFile(fileData, "ExpiredProductList.csv");
+                }
             }
 
             DisposeServices();
@@ -45,11 +57,13 @@ namespace FileZilla
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IExtraFeeRepository, ExtraFeeRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             //Add Services
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IFileZillaService, FileZillaService>();
+            services.AddScoped<IProductService, ProductService>();
 
             serviceProvider = services.BuildServiceProvider(true);
         }

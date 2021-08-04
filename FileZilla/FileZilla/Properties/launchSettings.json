@@ -2,7 +2,7 @@
   "profiles": {
     "FileZilla": {
       "commandName": "Project",
-      "commandLineArgs": "8 2021"
+      "commandLineArgs": "ExpiredProductList.csv"
     }
   }
 }
